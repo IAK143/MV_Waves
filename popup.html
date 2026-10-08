@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MWaves Settings</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 320px;
+            padding: 24px;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #050505;
+            color: #ffffff;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 20px;
+            text-align: left;
+            margin-bottom: 24px;
+            color: #3374ff;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: background 0.3s;
+        }
+
+        .control-group:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #eeeeee;
+        }
+
+        /* Styled Select */
+        select {
+            appearance: none;
+            background: #333;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 32px 8px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.7-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 10px auto;
+        }
+
+        select:hover {
+            border-color: #666;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 100px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked+.slider {
+            background-color: #339cff;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Visualizer Preview / Decorative element */
+        .preview-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 10px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .preview-fill {
+            width: 100%;
+            height: 100%;
+            background: #3374ff;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scaleX(0.8);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scaleX(0.8);
+                opacity: 0.8;
+            }
+        }
+
+        /* Range Input Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100px;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #51535c;
+            border-radius: 3px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #33a7ff;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -5px;
+            box-shadow: 0 0 10px rgba(51, 187, 255, 0.4);
+        }
+
+        .control-group.column {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h2><img src="icons/icon32.png" alt="MWaves Logo"> MWaves</h2>
+
+    <div class="control-group">
+        <label for="enabled">Visualizer</label>
+        <label class="switch">
+            <input type="checkbox" id="enabled">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="control-group">
+        <label for="style">Style</label>
+        <select id="style">
+            <option value="bars">Bars</option>
+        </select>
+    </div>
+
+    <div class="control-group">
+        <label for="symmetric">Symmetric</label>
+        <label class="switch">
+            <input type="checkbox" id="symmetric">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="control-group column">
+        <div class="control-header">
+            <label for="maxHeight">Max Height</label>
+            <span id="maxHeightValue" style="font-size: 12px; color: #888;">40%</span>
+        </div>
+        <input type="range" id="maxHeight" min="10" max="100" value="40" style="width: 100%;">
+    </div>
+
+    <div class="control-group column">
+        <div class="control-header">
+            <label for="barCount">Bar Count</label>
+            <span id="barCountValue" style="font-size: 12px; color: #888;">64</span>
+        </div>
+        <input type="range" id="barCount" min="20" max="128" step="2" value="64" style="width: 100%;">
+    </div>
+
+    <div class="control-group column">
+        <div class="control-header">
+            <label for="glow">Glow Intensity</label>
+            <span id="glowValue" style="font-size: 12px; color: #888;">15</span>
+        </div>
+        <input type="range" id="glow" min="0" max="50" value="15" style="width: 100%;">
+    </div>
+
+    <!-- Decorative footer line -->
+    <div class="preview-bar">
+        <div class="preview-fill"></div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

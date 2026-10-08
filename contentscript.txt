@@ -1,0 +1,1145 @@
+// MWaves - YouTube Audio Visualizer Content Script
+
+let audioContext;
+let analyser;
+let source;
+let canvas;
+let canvasCtx;
+let animationId;
+let isEnabled = true; // Default to true, will sync with storage
+let visualizerStyle = 'bars'; // Default style
+let isSymmetric = false;
+let maxHeightFactor = 0.4;
+let visualBarCount = 64;
+let videoElement;
+let colorCanvas;
+let colorCtx;
+let currentColor = { r: 255, g: 255, b: 255 };
+let targetColor = { r: 255, g: 255, b: 255 };
+let bars = [];
+let glowIntensity = 15;
+
+// Spectral Flux transient detection
+let prevMagnitudes = null;
+let spectralFlux = 0;
+let smoothedFlux = 0;
+
+// Shockwave state
+let shockwaves = []; // Array of active shockwave rings
+let lastShockwaveTime = 0;
+
+// RMS energy for color lerp
+let currentRMS = 0;
+
+// Peak tracker for AGC
+let peakTracker = 1.0;
+
+// CORS detection
+let corsFailed = false;
+
+// Resize observer reference
+let resizeObserver = null;
+
+
+class Bar {
+    constructor(index, totalBars) {
+        this.smoothedValue = 0;
+        this.index = index;
+        // Frequency position: 0 = bass, 1 = highs
+        this.freqRatio = totalBars > 0 ? index / totalBars : 0;
+        
+        // Frequency-dependent decay rate (smooth continuous interpolation to avoid step jumps):
+        // Bass (0.0): slow decay (0.08) for a heavy, solid feel.
+        // Mid/Vocals (0.5): fast decay (0.18) to track singing transients.
+        // Highs (1.0): medium-fast decay (0.12) to catch treble hits cleanly.
+        const ratio = this.freqRatio;
+        if (ratio < 0.5) {
+            this.decayAlpha = 0.08 + (ratio / 0.5) * 0.10;
+        } else {
+            this.decayAlpha = 0.18 - ((ratio - 0.5) / 0.5) * 0.06;
+        }
+    }
+
+    /**
+     * EMA: St = α · Yt + (1 - α) · St-1
+     * Attack α modulated by spectral flux; decay is frequency-dependent
+     */
+    update(rawValue, flux) {
+        const attackAlpha = 0.35 + Math.min(0.45, flux * 2.0);
+        const alpha = rawValue > this.smoothedValue ? attackAlpha : this.decayAlpha;
+        this.smoothedValue = alpha * rawValue + (1 - alpha) * this.smoothedValue;
+
+        // Idle breathing
+        if (this.smoothedValue < 0.02) {
+            this.smoothedValue = 0.02 + Math.sin(Date.now() * 0.0015 + this.index * 0.5) * 0.015;
+        }
+    }
+}
+
+function initBars(count) {
+    bars = Array.from({ length: count }, (_, i) => new Bar(i, count));
+}
+
+
+// Initialize
+function init() {
+    console.log("MWaves: Initializing...");
+
+    // Check storage for settings
+    chrome.storage.local.get(['enabled', 'style', 'symmetric', 'maxHeight', 'barCount', 'glow'], (result) => {
+        isEnabled = result.enabled !== false;
+        visualizerStyle = result.style || 'bars';
+        isSymmetric = result.symmetric === true;
+        maxHeightFactor = (result.maxHeight || 40) / 100;
+        visualBarCount = result.barCount || 64;
+        glowIntensity = result.glow || 15;
+        initBars(visualBarCount);
+
+        if (isEnabled) {
+            startVisualizer();
+        }
+    });
+
+    // Listen for navigation or dynamic page updates (YouTube is SPA)
+    // A simple interval to check if video exists and we aren't attached might be robust enough for MVP
+    // or MutationObserver. Let's try interval for simplicity to catch video element appearance.
+    setInterval(checkForVideo, 1000);
+}
+
+let lastUrl = window.location.href;
+
+function checkForVideo() {
+    const currentUrl = window.location.href;
+    const urlChanged = currentUrl !== lastUrl;
+    lastUrl = currentUrl;
+
+    const video = document.querySelector('video');
+
+    // Check if it's a music video
+    if (video && isMusicVideo()) {
+        // If detection logic passes
+        // If we switched videos OR url changed (new content in same player), ensure setup
+        if (video !== videoElement || urlChanged || !canvas) {
+            console.log("MWaves: Music video detected (or navigation).");
+            videoElement = video;
+            if (isEnabled) {
+                // Determine if we need to full reset or just ensure visualizer
+                // For safety, re-run setup which now handles existing sources safely
+                setupAudio();
+                createCanvas();
+            }
+        }
+    } else {
+        // Not a music video
+        if (videoElement) {
+            // Check if we *really* need to stop - only if we were previously running
+            // If the title just hasn't updated yet, we might be premature. 
+            // BUT usually isMusicVideo checks title.
+            // Let's trust isMusicVideo.
+            console.log("MWaves: Not a music video. Stopping.");
+            stopVisualizer();
+            const existingCanvas = document.getElementById('mwaves-canvas');
+            if (existingCanvas) {
+                existingCanvas.remove();
+                if (resizeObserver) {
+                    resizeObserver.disconnect();
+                    resizeObserver = null;
+                }
+            }
+            videoElement = null;
+            // We do NOT clear _mwavesSource here, as the element might be reused later for music.
+        }
+    }
+}
+
+function isMusicVideo() {
+    try {
+        // 1. Check Keywords in Title
+        const title = document.title.toLowerCase();
+        const musicKeywords = ['official music video', 'official video', 'official lyric video', 'Alexander Rybak', 'lyrics', 'audio', 'feat.', 'ft.', 'remix', 'covered by', 'music video', 'lofi mix', 'lofi', '(Lyric Video)', 'SAMJHO NA', 'MUSIC', 'VEVO', 'TOPIC', 'Fairytale', 'Symphony', 'Orchestra', 'Piano', 'Guitar', 'Bass', 'Drum', 'Violin', 'happy nation', 'singer', 'song', 'album', 'track', 'playlist', 'concert', 'live performance'];
+        if (musicKeywords.some(keyword => title.includes(keyword))) return true;
+
+        // 2. Check Channel Name (VEVO, Topic, etc.)
+        const channelName = document.querySelector('#owner #channel-name a')?.innerText?.toLowerCase() ||
+            document.querySelector('.ytd-channel-name a')?.innerText?.toLowerCase() || "";
+        if (channelName.includes('vevo') || channelName.includes('topic') || channelName.includes('official') || channelName.includes('music')) return true;
+
+        // 3. Check Metadata (Genre) - often available in parsing meta tags or explicit JS objects if accessible
+        // Simple check for 'Music' in category often works if description is expanded or via specific selectors
+        const category = document.querySelector('meta[itemprop="genre"]')?.content;
+        if (category === 'Music') return true;
+
+        return false;
+    } catch (e) {
+        return false;
+    }
+}
+
+function setupAudio() {
+    if (!videoElement) return;
+
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+
+        if (!audioContext) {
+            audioContext = new AudioContext();
+        }
+
+        // Reuse existing source if attached to this specific element
+        if (videoElement._mwavesSource) {
+            source = videoElement._mwavesSource;
+            // Ensure analyser exists
+            if (!analyser) {
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 2048;
+                analyser.smoothingTimeConstant = 0.25;
+                analyser.minDecibels = -90;
+                analyser.maxDecibels = -10;
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+            }
+        } else {
+            // Create new source for this element
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0.25;
+            analyser.minDecibels = -90;
+            analyser.maxDecibels = -10;
+
+            source = audioContext.createMediaElementSource(videoElement);
+            videoElement._mwavesSource = source; // Tag element
+
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+        }
+
+        console.log("MWaves: Audio setup complete.");
+    } catch (e) {
+        console.error("MWaves: Error setting up audio:", e);
+    }
+}
+
+function createCanvas() {
+    const playerContainer = document.querySelector('#movie_player') || document.querySelector('.html5-video-player');
+    if (!playerContainer) return;
+
+    // Disconnect old ResizeObserver if it exists
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+    }
+
+    // Remove existing canvas if any
+    const existingCanvas = document.getElementById('mwaves-canvas');
+    if (existingCanvas) existingCanvas.remove();
+
+    canvas = document.createElement('canvas');
+    canvas.id = 'mwaves-canvas';
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none'; // Click-through
+    canvas.style.zIndex = '10'; // Above video, below controls
+
+    playerContainer.appendChild(canvas);
+    canvasCtx = canvas.getContext('2d');
+
+    // Create ResizeObserver to monitor size updates of the video player
+    resizeObserver = new ResizeObserver(() => {
+        resizeCanvas();
+    });
+    resizeObserver.observe(playerContainer);
+
+    resizeCanvas();
+
+    if (isEnabled) {
+        draw();
+    }
+}
+
+function resizeCanvas() {
+    if (canvas) {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+    }
+}
+
+// Helper to convert HSL to RGB
+function hslToRgb(h, s, l) {
+    let r, g, b;
+    if (s === 0) {
+        r = g = b = l; // achromatic
+    } else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+// Helper for fractional FFT bin sampling using linear interpolation
+function getBandValue(dataArray, fLow, fHigh, binHz) {
+    const startIdx = fLow / binHz;
+    const endIdx = fHigh / binHz;
+    
+    // If the band is narrower than a single bin, interpolate at the center
+    if (endIdx - startIdx < 1) {
+        const centerIdx = (startIdx + endIdx) / 2;
+        const i = Math.floor(centerIdx);
+        const f = centerIdx - i;
+        if (i >= dataArray.length - 1) return dataArray[dataArray.length - 1];
+        return dataArray[i] * (1 - f) + dataArray[i + 1] * f;
+    }
+    
+    // Otherwise, average the bins in the range (including fractional boundaries)
+    let sum = 0;
+    let weightSum = 0;
+    
+    const startBin = Math.floor(startIdx);
+    const endBin = Math.floor(endIdx);
+    
+    for (let b = startBin; b <= endBin; b++) {
+        let weight = 1;
+        if (b === startBin) {
+            weight = 1 - (startIdx - startBin);
+        } else if (b === endBin) {
+            weight = endIdx - endBin;
+        }
+        
+        if (b < dataArray.length) {
+            sum += dataArray[b] * weight;
+            weightSum += weight;
+        }
+    }
+    
+    return weightSum > 0 ? sum / weightSum : 0;
+}
+
+function draw() {
+    if (!isEnabled || !canvasCtx || !analyser) {
+        cancelAnimationFrame(animationId);
+        if (canvasCtx && canvas) canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    animationId = requestAnimationFrame(draw);
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    if (visualizerStyle === 'bars') {
+        analyser.getByteFrequencyData(dataArray);
+    } else {
+        analyser.getByteTimeDomainData(dataArray);
+    }
+
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // ── Spectral Flux: Transient Detection ──
+    if (!prevMagnitudes) prevMagnitudes = new Float32Array(bufferLength);
+    spectralFlux = 0;
+    for (let k = 0; k < bufferLength; k++) {
+        const diff = dataArray[k] - prevMagnitudes[k];
+        spectralFlux += Math.max(0, diff); // Half-wave rectification
+    }
+    spectralFlux /= bufferLength;
+    spectralFlux /= 255;
+    for (let k = 0; k < bufferLength; k++) {
+        prevMagnitudes[k] = dataArray[k];
+    }
+    smoothedFlux = 0.3 * spectralFlux + 0.7 * smoothedFlux;
+
+    // ── RMS Energy (from time-domain) ──
+    const timeData = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(timeData);
+    let rmsSum = 0;
+    for (let n = 0; n < bufferLength; n++) {
+        const sample = (timeData[n] - 128) / 128;
+        rmsSum += sample * sample;
+    }
+    currentRMS = Math.sqrt(rmsSum / bufferLength);
+
+    // ── Color Sampling with RMS-driven Lerp ──
+    if (animationId % 30 === 0 && videoElement && !corsFailed) {
+        try {
+            if (!colorCanvas) {
+                colorCanvas = document.createElement('canvas');
+                colorCanvas.width = 10;
+                colorCanvas.height = 10;
+                colorCtx = colorCanvas.getContext('2d', { willReadFrequently: true });
+            }
+            colorCtx.drawImage(videoElement, 0, 0, 10, 10);
+            const frameData = colorCtx.getImageData(0, 0, 10, 10).data;
+
+            let r = 0, g = 0, b = 0;
+            const pixelCount = frameData.length / 4;
+            for (let i = 0; i < frameData.length; i += 4) {
+                r += frameData[i];
+                g += frameData[i + 1];
+                b += frameData[i + 2];
+            }
+
+            const avgColor = {
+                r: Math.floor(r / pixelCount),
+                g: Math.floor(g / pixelCount),
+                b: Math.floor(b / pixelCount)
+            };
+
+            const max = Math.max(avgColor.r, avgColor.g, avgColor.b);
+            const boost = max < 150 ? 150 / Math.max(max, 1) : 1;
+
+            targetColor = {
+                r: Math.min(255, avgColor.r * boost),
+                g: Math.min(255, avgColor.g * boost),
+                b: Math.min(255, avgColor.b * boost)
+            };
+        } catch (e) {
+            corsFailed = true; // Fallback permanently to dynamic color generation
+        }
+    }
+
+    // CORS Fallback: beautiful cycling colors based on time
+    if (corsFailed) {
+        const timeFactor = Date.now() * 0.00008;
+        const hue = (timeFactor * 360) % 360;
+        const rgb = hslToRgb(hue / 360, 0.85, 0.6);
+        targetColor = { r: rgb[0], g: rgb[1], b: rgb[2] };
+    }
+
+    // Ensure target color has a minimum brightness so it remains visible
+    const minBrightness = 60;
+    const brightness = (targetColor.r * 0.299 + targetColor.g * 0.587 + targetColor.b * 0.114);
+    if (brightness < minBrightness) {
+        const factor = (minBrightness - brightness) / minBrightness;
+        targetColor.r = Math.round(targetColor.r * (1 - factor) + 51 * factor);
+        targetColor.g = Math.round(targetColor.g * (1 - factor) + 116 * factor);
+        targetColor.b = Math.round(targetColor.b * (1 - factor) + 255 * factor);
+    }
+
+    const colorSpeed = 0.02 + currentRMS * 0.06;
+    currentColor.r += (targetColor.r - currentColor.r) * colorSpeed;
+    currentColor.g += (targetColor.g - currentColor.g) * colorSpeed;
+    currentColor.b += (targetColor.b - currentColor.b) * colorSpeed;
+
+    // ── Bar setup ──
+    const barSpacing = 4;
+    const barWidth = Math.max(1, (width / visualBarCount) - barSpacing);
+    const cornerRadius = Math.max(0, barWidth / 2);
+
+    // ── Shockwave System ──
+    const beatThreshold = Math.max(0.12, smoothedFlux * 1.5);
+    const now = Date.now();
+    if (spectralFlux > beatThreshold && (now - lastShockwaveTime) > 250 && shockwaves.length < 3) {
+        shockwaves.push({
+            radius: 0,
+            maxRadius: width * 0.6,
+            opacity: Math.min(0.4, spectralFlux),
+            speed: 4 + spectralFlux * 8,
+            cx: width / 2,
+            cy: height
+        });
+        lastShockwaveTime = now;
+    }
+
+    // Update and draw shockwaves
+    canvasCtx.shadowBlur = 0;
+    for (let s = shockwaves.length - 1; s >= 0; s--) {
+        const sw = shockwaves[s];
+        sw.radius += sw.speed;
+        sw.opacity *= 0.96;
+
+        if (sw.opacity < 0.01 || sw.radius > sw.maxRadius) {
+            shockwaves.splice(s, 1);
+            continue;
+        }
+
+        canvasCtx.beginPath();
+        canvasCtx.arc(sw.cx, sw.cy, sw.radius, 0, Math.PI * 2);
+        canvasCtx.strokeStyle = `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${sw.opacity})`;
+        canvasCtx.lineWidth = 2 + smoothedFlux * 6;
+        canvasCtx.stroke();
+    }
+
+    // ── Reactive background glow (flux-driven) ──
+    if (smoothedFlux > 0.02) {
+        const gradient = canvasCtx.createRadialGradient(
+            width / 2, height, 0,
+            width / 2, height, width * 0.5
+        );
+        const glowAlpha = smoothedFlux * 0.25;
+        gradient.addColorStop(0, `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${glowAlpha})`);
+        gradient.addColorStop(1, 'transparent');
+        canvasCtx.fillStyle = gradient;
+        canvasCtx.fillRect(0, 0, width, height);
+    }
+
+    // ── Log₂ frequency banding with continuous fractional bin sampling ──
+    const sampleRate = audioContext ? audioContext.sampleRate : 44100;
+    const fMin = 50;
+    const fMax = 16000;
+    const binHz = sampleRate / analyser.fftSize;
+    const logRatio = Math.log2(fMax / fMin);
+
+    const barCount = isSymmetric ? Math.floor(visualBarCount / 2) : visualBarCount;
+    const maxBarHeight = height * maxHeightFactor;
+
+    const bandValues = new Float32Array(barCount);
+
+    for (let i = 0; i < barCount; i++) {
+        const fLow  = fMin * Math.pow(2, logRatio * (i / barCount));
+        const fHigh = fMin * Math.pow(2, logRatio * ((i + 1) / barCount));
+
+        const avg = getBandValue(dataArray, fLow, fHigh, binHz);
+
+        const ratio = i / barCount;
+        const eqCurve = 1.0 + ratio * 2.0;
+        const normalized = Math.max(0, (avg - 5) / 250);
+        bandValues[i] = Math.pow(normalized, 1.2) * eqCurve;
+    }
+
+    // ── Dynamic AGC (Limiter / Peak Tracker) ──
+    const currentMax = Math.max(...bandValues);
+    if (currentMax > peakTracker) {
+        peakTracker += (currentMax - peakTracker) * 0.25;
+    } else {
+        peakTracker += (currentMax - peakTracker) * 0.008;
+    }
+    peakTracker = Math.max(0.3, peakTracker);
+
+    // ── Set Glow (Bloom) ONCE per frame for performance ──
+    if (glowIntensity > 0) {
+        canvasCtx.shadowBlur = glowIntensity;
+        canvasCtx.shadowColor = `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, 0.45)`;
+    } else {
+        canvasCtx.shadowBlur = 0;
+    }
+
+    // ── Render bars ──
+    if (isSymmetric) {
+        const centerX = width / 2;
+        for (let i = 0; i < barCount; i++) {
+            const value = Math.min(1.0, bandValues[i] / peakTracker);
+
+            if (!bars[i]) bars[i] = new Bar(i, barCount);
+            bars[i].update(value, smoothedFlux);
+
+            const h = Math.min(maxBarHeight, bars[i].smoothedValue * maxBarHeight);
+            const xRight = centerX + (i * (barWidth + barSpacing)) + barSpacing / 2;
+            const xLeft = centerX - (i * (barWidth + barSpacing)) - barWidth - barSpacing / 2;
+
+            drawPremiumBar(canvasCtx, xRight, height - h, barWidth, h, cornerRadius, currentColor);
+            drawPremiumBar(canvasCtx, xLeft, height - h, barWidth, h, cornerRadius, currentColor);
+        }
+    } else {
+        for (let i = 0; i < barCount; i++) {
+            const value = Math.min(1.0, bandValues[i] / peakTracker);
+
+            if (!bars[i]) bars[i] = new Bar(i, barCount);
+            bars[i].update(value, smoothedFlux);
+
+            const h = Math.min(maxBarHeight, bars[i].smoothedValue * maxBarHeight);
+            const x = i * (barWidth + barSpacing) + barSpacing / 2;
+
+            drawPremiumBar(canvasCtx, x, height - h, barWidth, h, cornerRadius, currentColor);
+        }
+    }
+
+    // Reset shadow state
+    canvasCtx.shadowBlur = 0;
+}
+
+function drawPremiumBar(ctx, x, y, w, h, r, color) {
+    if (!isFinite(h) || h < 0.1 || !isFinite(w) || w < 0.1) return;
+    const safeR = Math.max(0, isFinite(r) ? r : 0);
+
+    // Solid flat fill for modern UI (no gradients)
+    ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 0.92)`;
+    
+    ctx.beginPath();
+    if (ctx.roundRect) {
+        try {
+            ctx.roundRect(x, y, w, h, [safeR, safeR, 0, 0]);
+        } catch (e) {
+            ctx.rect(x, y, w, h);
+        }
+    } else {
+        ctx.rect(x, y, w, h);
+    }
+    ctx.fill();
+}
+
+function startVisualizer() {
+    if (!audioContext) {
+        setupAudio();
+        createCanvas();
+    }
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    draw();
+}
+
+function stopVisualizer() {
+    cancelAnimationFrame(animationId);
+    if (canvasCtx) canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// Message Listener
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === 'UPDATE_STATE') {
+        isEnabled = request.enabled;
+        if (isEnabled) {
+            startVisualizer();
+        } else {
+            stopVisualizer();
+        }
+    } else if (request.type === 'UPDATE_STYLE') {
+        visualizerStyle = request.style;
+    } else if (request.type === 'UPDATE_SYMMETRIC') {
+        isSymmetric = request.symmetric;
+    } else if (request.type === 'UPDATE_MAX_HEIGHT') {
+        maxHeightFactor = request.maxHeight / 100;
+    } else if (request.type === 'UPDATE_BAR_COUNT') {
+        visualBarCount = request.barCount;
+        initBars(visualBarCount);
+    } else if (request.type === 'UPDATE_GLOW') {
+        glowIntensity = request.glow;
+    }
+
+});
+
+// Start
+init();
+--dont change this is a backup file
+
+2nd code : // MWaves - YouTube Audio Visualizer Content Script
+// Glass bars + smooth framerate-independent motion
+
+let audioContext;
+let analyser;
+let source;
+let canvas;
+let canvasCtx;
+let animationId;
+let isEnabled = true;
+let visualizerStyle = 'bars';
+let isSymmetric = false;
+let maxHeightFactor = 0.4;
+let visualBarCount = 64;
+let videoElement;
+let colorCanvas;
+let colorCtx;
+let currentColor = { r: 255, g: 255, b: 255 };
+let targetColor = { r: 255, g: 255, b: 255 };
+let bars = [];
+let glowIntensity = 15;
+
+let prevMagnitudes = null;
+let spectralFlux = 0;
+let smoothedFlux = 0;
+
+let shockwaves = [];
+let lastShockwaveTime = 0;
+
+let currentRMS = 0;
+let peakTracker = 1.0;
+let corsFailed = false;
+let resizeObserver = null;
+let lastFrameTime = performance.now();
+
+class Bar {
+    constructor(index, totalBars) {
+        this.smoothedValue = 0;
+        this.index = index;
+        this.freqRatio = totalBars > 0 ? index / totalBars : 0;
+        const ratio = this.freqRatio;
+        if (ratio < 0.5) {
+            this.decayAlpha = 0.08 + (ratio / 0.5) * 0.10;
+        } else {
+            this.decayAlpha = 0.18 - ((ratio - 0.5) / 0.5) * 0.06;
+        }
+    }
+
+    update(rawValue, flux, dt) {
+        const attackAlpha60fps = 0.35 + Math.min(0.45, flux * 2.0);
+        const alpha60fps = rawValue > this.smoothedValue ? attackAlpha60fps : this.decayAlpha;
+        const alpha = 1 - Math.pow(1 - alpha60fps, dt * 60);
+        this.smoothedValue = alpha * rawValue + (1 - alpha) * this.smoothedValue;
+        if (this.smoothedValue < 0.02) {
+            this.smoothedValue = 0.02 + Math.sin(Date.now() * 0.0015 + this.index * 0.5) * 0.015;
+        }
+    }
+}
+
+function initBars(count) {
+    bars = Array.from({ length: count }, (_, i) => new Bar(i, count));
+}
+
+function init() {
+    console.log("MWaves: Initializing...");
+    chrome.storage.local.get(['enabled', 'style', 'symmetric', 'maxHeight', 'barCount', 'glow'], (result) => {
+        isEnabled = result.enabled !== false;
+        visualizerStyle = result.style || 'bars';
+        isSymmetric = result.symmetric === true;
+        maxHeightFactor = (result.maxHeight || 40) / 100;
+        visualBarCount = result.barCount || 64;
+        glowIntensity = result.glow || 15;
+        initBars(visualBarCount);
+        if (isEnabled) startVisualizer();
+    });
+    setInterval(checkForVideo, 1000);
+}
+
+let lastUrl = window.location.href;
+
+function checkForVideo() {
+    const currentUrl = window.location.href;
+    const urlChanged = currentUrl !== lastUrl;
+    lastUrl = currentUrl;
+    const video = document.querySelector('video');
+    if (video && isMusicVideo()) {
+        if (video !== videoElement || urlChanged || !canvas) {
+            console.log("MWaves: Music video detected.");
+            videoElement = video;
+            if (isEnabled) {
+                setupAudio();
+                createCanvas();
+            }
+        }
+    } else {
+        if (videoElement) {
+            console.log("MWaves: Not a music video. Stopping.");
+            stopVisualizer();
+            const existingCanvas = document.getElementById('mwaves-canvas');
+            if (existingCanvas) {
+                existingCanvas.remove();
+                if (resizeObserver) {
+                    resizeObserver.disconnect();
+                    resizeObserver = null;
+                }
+            }
+            videoElement = null;
+        }
+    }
+}
+
+function isMusicVideo() {
+    try {
+        const title = document.title.toLowerCase();
+        const musicKeywords = ['official music video', 'official video', 'official lyric video', 'Alexander Rybak', 'lyrics', 'audio', 'feat.', 'ft.', 'remix', 'covered by', 'music video', 'lofi mix', 'lofi', '(Lyric Video)', 'SAMJHO NA', 'MUSIC', 'VEVO', 'TOPIC', 'Fairytale', 'Symphony', 'Orchestra', 'Piano', 'Guitar', 'Bass', 'Drum', 'Violin', 'happy nation', 'singer', 'song', 'album', 'track', 'playlist', 'concert', 'live performance'];
+        if (musicKeywords.some(keyword => title.includes(keyword))) return true;
+        const channelName = document.querySelector('#owner #channel-name a')?.innerText?.toLowerCase() ||
+            document.querySelector('.ytd-channel-name a')?.innerText?.toLowerCase() || "";
+        if (channelName.includes('vevo') || channelName.includes('topic') || channelName.includes('official') || channelName.includes('music')) return true;
+        const category = document.querySelector('meta[itemprop="genre"]')?.content;
+        if (category === 'Music') return true;
+        return false;
+    } catch (e) {
+        return false;
+    }
+}
+
+function setupAudio() {
+    if (!videoElement) return;
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!audioContext) {
+            audioContext = new AudioContext();
+        }
+        if (videoElement._mwavesSource) {
+            source = videoElement._mwavesSource;
+            if (!analyser) {
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 2048;
+                analyser.smoothingTimeConstant = 0.4;
+                analyser.minDecibels = -90;
+                analyser.maxDecibels = -10;
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+            }
+        } else {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0.4;
+            analyser.minDecibels = -90;
+            analyser.maxDecibels = -10;
+            source = audioContext.createMediaElementSource(videoElement);
+            videoElement._mwavesSource = source;
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+        }
+        console.log("MWaves: Audio setup complete.");
+    } catch (e) {
+        console.error("MWaves: Error setting up audio:", e);
+    }
+}
+
+function createCanvas() {
+    const playerContainer = document.querySelector('#movie_player') || document.querySelector('.html5-video-player');
+    if (!playerContainer) return;
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+    }
+    const existingCanvas = document.getElementById('mwaves-canvas');
+    if (existingCanvas) existingCanvas.remove();
+    canvas = document.createElement('canvas');
+    canvas.id = 'mwaves-canvas';
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '10';
+    // NO backdrop-filter – glass effect is drawn on the bars, not the canvas
+    playerContainer.appendChild(canvas);
+    canvasCtx = canvas.getContext('2d');
+    resizeObserver = new ResizeObserver(() => {
+        resizeCanvas();
+    });
+    resizeObserver.observe(playerContainer);
+    resizeCanvas();
+    if (isEnabled) draw();
+}
+
+function resizeCanvas() {
+    if (canvas) {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+    }
+}
+
+function hslToRgb(h, s, l) {
+    let r, g, b;
+    if (s === 0) {
+        r = g = b = l;
+    } else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function getBandValue(dataArray, fLow, fHigh, binHz) {
+    const startIdx = fLow / binHz;
+    const endIdx = fHigh / binHz;
+    if (endIdx - startIdx < 1) {
+        const centerIdx = (startIdx + endIdx) / 2;
+        const i = Math.floor(centerIdx);
+        const f = centerIdx - i;
+        if (i >= dataArray.length - 1) return dataArray[dataArray.length - 1];
+        return dataArray[i] * (1 - f) + dataArray[i + 1] * f;
+    }
+    let sum = 0, weightSum = 0;
+    const startBin = Math.floor(startIdx), endBin = Math.floor(endIdx);
+    for (let b = startBin; b <= endBin; b++) {
+        let weight = 1;
+        if (b === startBin) weight = 1 - (startIdx - startBin);
+        else if (b === endBin) weight = endIdx - endBin;
+        if (b < dataArray.length) {
+            sum += dataArray[b] * weight;
+            weightSum += weight;
+        }
+    }
+    return weightSum > 0 ? sum / weightSum : 0;
+}
+
+function draw() {
+    if (!isEnabled || !canvasCtx || !analyser) {
+        cancelAnimationFrame(animationId);
+        if (canvasCtx && canvas) canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    animationId = requestAnimationFrame(draw);
+
+    const now = performance.now();
+    const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+    lastFrameTime = now;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    if (visualizerStyle === 'bars') {
+        analyser.getByteFrequencyData(dataArray);
+    } else {
+        analyser.getByteTimeDomainData(dataArray);
+    }
+
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    const width = canvas.width, height = canvas.height;
+
+    // Spectral Flux
+    if (!prevMagnitudes) prevMagnitudes = new Float32Array(bufferLength);
+    spectralFlux = 0;
+    for (let k = 0; k < bufferLength; k++) {
+        const diff = dataArray[k] - prevMagnitudes[k];
+        spectralFlux += Math.max(0, diff);
+    }
+    spectralFlux /= bufferLength;
+    spectralFlux /= 255;
+    for (let k = 0; k < bufferLength; k++) {
+        prevMagnitudes[k] = dataArray[k];
+    }
+    smoothedFlux = 0.3 * spectralFlux + 0.7 * smoothedFlux;
+
+    // RMS
+    const timeData = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(timeData);
+    let rmsSum = 0;
+    for (let n = 0; n < bufferLength; n++) {
+        const sample = (timeData[n] - 128) / 128;
+        rmsSum += sample * sample;
+    }
+    currentRMS = Math.sqrt(rmsSum / bufferLength);
+
+    // Color sampling
+    if (animationId % 30 === 0 && videoElement && !corsFailed) {
+        try {
+            if (!colorCanvas) {
+                colorCanvas = document.createElement('canvas');
+                colorCanvas.width = 10;
+                colorCanvas.height = 10;
+                colorCtx = colorCanvas.getContext('2d', { willReadFrequently: true });
+            }
+            colorCtx.drawImage(videoElement, 0, 0, 10, 10);
+            const frameData = colorCtx.getImageData(0, 0, 10, 10).data;
+            let r = 0, g = 0, b = 0;
+            const pixelCount = frameData.length / 4;
+            for (let i = 0; i < frameData.length; i += 4) {
+                r += frameData[i];
+                g += frameData[i + 1];
+                b += frameData[i + 2];
+            }
+            const avgColor = { r: Math.floor(r / pixelCount), g: Math.floor(g / pixelCount), b: Math.floor(b / pixelCount) };
+            const max = Math.max(avgColor.r, avgColor.g, avgColor.b);
+            const boost = max < 150 ? 150 / Math.max(max, 1) : 1;
+            targetColor = {
+                r: Math.min(255, avgColor.r * boost),
+                g: Math.min(255, avgColor.g * boost),
+                b: Math.min(255, avgColor.b * boost)
+            };
+        } catch (e) {
+            corsFailed = true;
+        }
+    }
+
+    if (corsFailed) {
+        const timeFactor = Date.now() * 0.00008;
+        const hue = (timeFactor * 360) % 360;
+        const rgb = hslToRgb(hue / 360, 0.85, 0.6);
+        targetColor = { r: rgb[0], g: rgb[1], b: rgb[2] };
+    }
+
+    const brightness = (targetColor.r * 0.299 + targetColor.g * 0.587 + targetColor.b * 0.114);
+    if (brightness < 60) {
+        const factor = (60 - brightness) / 60;
+        targetColor.r = Math.round(targetColor.r * (1 - factor) + 51 * factor);
+        targetColor.g = Math.round(targetColor.g * (1 - factor) + 116 * factor);
+        targetColor.b = Math.round(targetColor.b * (1 - factor) + 255 * factor);
+    }
+
+    const colorSpeed = 0.02 + currentRMS * 0.06;
+    currentColor.r += (targetColor.r - currentColor.r) * colorSpeed;
+    currentColor.g += (targetColor.g - currentColor.g) * colorSpeed;
+    currentColor.b += (targetColor.b - currentColor.b) * colorSpeed;
+
+    const barSpacing = 4;
+    const barWidth = Math.max(1, (width / visualBarCount) - barSpacing);
+    const cornerRadius = Math.max(0, barWidth / 2);
+
+    // Shockwaves
+    const beatThreshold = Math.max(0.12, smoothedFlux * 1.5);
+    const nowMs = Date.now();
+    if (spectralFlux > beatThreshold && (nowMs - lastShockwaveTime) > 250 && shockwaves.length < 3) {
+        shockwaves.push({
+            radius: 0,
+            maxRadius: width * 0.6,
+            opacity: Math.min(0.4, spectralFlux),
+            speed: 4 + spectralFlux * 8,
+            cx: width / 2,
+            cy: height
+        });
+        lastShockwaveTime = nowMs;
+    }
+
+    canvasCtx.shadowBlur = 0;
+    for (let s = shockwaves.length - 1; s >= 0; s--) {
+        const sw = shockwaves[s];
+        sw.radius += sw.speed;
+        sw.opacity *= 0.96;
+        if (sw.opacity < 0.01 || sw.radius > sw.maxRadius) {
+            shockwaves.splice(s, 1);
+            continue;
+        }
+        canvasCtx.beginPath();
+        canvasCtx.arc(sw.cx, sw.cy, sw.radius, 0, Math.PI * 2);
+        canvasCtx.strokeStyle = `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${sw.opacity})`;
+        canvasCtx.lineWidth = 2 + smoothedFlux * 6;
+        canvasCtx.stroke();
+    }
+
+    if (smoothedFlux > 0.02) {
+        const gradient = canvasCtx.createRadialGradient(width / 2, height, 0, width / 2, height, width * 0.5);
+        gradient.addColorStop(0, `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${smoothedFlux * 0.25})`);
+        gradient.addColorStop(1, 'transparent');
+        canvasCtx.fillStyle = gradient;
+        canvasCtx.fillRect(0, 0, width, height);
+    }
+
+    const sampleRate = audioContext ? audioContext.sampleRate : 44100;
+    const fMin = 50, fMax = 16000;
+    const binHz = sampleRate / analyser.fftSize;
+    const logRatio = Math.log2(fMax / fMin);
+    const barCount = isSymmetric ? Math.floor(visualBarCount / 2) : visualBarCount;
+    const maxBarHeight = height * maxHeightFactor;
+    const bandValues = new Float32Array(barCount);
+
+    for (let i = 0; i < barCount; i++) {
+        const fLow  = fMin * Math.pow(2, logRatio * (i / barCount));
+        const fHigh = fMin * Math.pow(2, logRatio * ((i + 1) / barCount));
+        const avg = getBandValue(dataArray, fLow, fHigh, binHz);
+        const ratio = i / barCount;
+        const eqCurve = 1.0 + ratio * 2.0;
+        const normalized = Math.max(0, (avg - 5) / 250);
+        bandValues[i] = Math.pow(normalized, 1.2) * eqCurve;
+    }
+
+    const currentMax = Math.max(...bandValues);
+    if (currentMax > peakTracker) {
+        peakTracker += (currentMax - peakTracker) * 0.25;
+    } else {
+        peakTracker += (currentMax - peakTracker) * 0.008;
+    }
+    peakTracker = Math.max(0.3, peakTracker);
+
+    if (glowIntensity > 0) {
+        canvasCtx.shadowBlur = glowIntensity;
+        canvasCtx.shadowColor = `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, 0.45)`;
+    } else {
+        canvasCtx.shadowBlur = 0;
+    }
+
+    if (isSymmetric) {
+        const centerX = width / 2;
+        for (let i = 0; i < barCount; i++) {
+            const value = Math.min(1.0, bandValues[i] / peakTracker);
+            if (!bars[i]) bars[i] = new Bar(i, barCount);
+            bars[i].update(value, smoothedFlux, dt);
+            const h = Math.min(maxBarHeight, bars[i].smoothedValue * maxBarHeight);
+            const xRight = centerX + (i * (barWidth + barSpacing)) + barSpacing / 2;
+            const xLeft = centerX - (i * (barWidth + barSpacing)) - barWidth - barSpacing / 2;
+            drawGlassBar(canvasCtx, xRight, height - h, barWidth, h, cornerRadius, currentColor);
+            drawGlassBar(canvasCtx, xLeft, height - h, barWidth, h, cornerRadius, currentColor);
+        }
+    } else {
+        for (let i = 0; i < barCount; i++) {
+            const value = Math.min(1.0, bandValues[i] / peakTracker);
+            if (!bars[i]) bars[i] = new Bar(i, barCount);
+            bars[i].update(value, smoothedFlux, dt);
+            const h = Math.min(maxBarHeight, bars[i].smoothedValue * maxBarHeight);
+            const x = i * (barWidth + barSpacing) + barSpacing / 2;
+            drawGlassBar(canvasCtx, x, height - h, barWidth, h, cornerRadius, currentColor);
+        }
+    }
+
+    canvasCtx.shadowBlur = 0;
+}
+
+function drawGlassBar(ctx, x, y, w, h, r, color) {
+    if (!isFinite(h) || h < 0.1 || !isFinite(w) || w < 0.1) return;
+    const safeR = Math.max(0, isFinite(r) ? r : 0);
+
+    // Glass vertical gradient (top highlight → main color → dark bottom)
+    const grad = ctx.createLinearGradient(x, y, x, y + h);
+    grad.addColorStop(0, `rgba(${Math.min(255, color.r + 80)}, ${Math.min(255, color.g + 80)}, ${Math.min(255, color.b + 80)}, 0.7)`);
+    grad.addColorStop(0.4, `rgba(${color.r}, ${color.g}, ${color.b}, 0.55)`);
+    grad.addColorStop(1, `rgba(${Math.max(0, color.r - 40)}, ${Math.max(0, color.g - 40)}, ${Math.max(0, color.b - 40)}, 0.8)`);
+    ctx.fillStyle = grad;
+
+    ctx.beginPath();
+    if (ctx.roundRect) {
+        ctx.roundRect(x, y, w, h, [safeR, safeR, 0, 0]);
+    } else {
+        ctx.rect(x, y, w, h);
+    }
+    ctx.fill();
+
+    // Thin glass‑like edge
+    ctx.strokeStyle = `rgba(255, 255, 255, 0.35)`;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+}
+
+function startVisualizer() {
+    if (!audioContext) {
+        setupAudio();
+        createCanvas();
+    }
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    draw();
+}
+
+function stopVisualizer() {
+    cancelAnimationFrame(animationId);
+    if (canvasCtx) canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === 'UPDATE_STATE') {
+        isEnabled = request.enabled;
+        if (isEnabled) startVisualizer();
+        else stopVisualizer();
+    } else if (request.type === 'UPDATE_STYLE') {
+        visualizerStyle = request.style;
+    } else if (request.type === 'UPDATE_SYMMETRIC') {
+        isSymmetric = request.symmetric;
+    } else if (request.type === 'UPDATE_MAX_HEIGHT') {
+        maxHeightFactor = request.maxHeight / 100;
+    } else if (request.type === 'UPDATE_BAR_COUNT') {
+        visualBarCount = request.barCount;
+        initBars(visualBarCount);
+    } else if (request.type === 'UPDATE_GLOW') {
+        glowIntensity = request.glow;
+    }
+});
+
+init();

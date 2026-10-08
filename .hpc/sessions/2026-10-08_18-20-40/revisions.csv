@@ -1,0 +1,334 @@
+timestamp,file,character_index,revision_number,preset,description,model_wps,duration_or_pause,status
+2026-10-08T18:21:09.962,D:\kuchu\manifest.json,298,1,review_duplication,Look for duplicated logic that could be simplified.,2.0000,1.9225,started
+2026-10-08T18:21:11.885,D:\kuchu\manifest.json,298,1,review_duplication,Look for duplicated logic that could be simplified.,2.0000,1.9233,completed
+2026-10-08T18:21:40.197,D:\kuchu\manifest.json,560,2,review_return_value,Check whether the function returns the intended value.,2.0000,2.5444,started
+2026-10-08T18:21:42.743,D:\kuchu\manifest.json,560,2,review_return_value,Check whether the function returns the intended value.,2.0000,2.5453,completed
+2026-10-08T18:22:18.270,D:\kuchu\manifest.json,863,3,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,2.0428,1.4531,started
+2026-10-08T18:22:19.724,D:\kuchu\manifest.json,863,3,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,2.0428,1.4539,completed
+2026-10-08T18:23:01.372,D:\kuchu\popup.html,289,1,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,3.9225,1.0806,started
+2026-10-08T18:23:02.454,D:\kuchu\popup.html,289,1,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,3.9225,1.0811,completed
+2026-10-08T18:23:33.141,D:\kuchu\popup.html,552,2,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,3.4348,started
+2026-10-08T18:23:36.576,D:\kuchu\popup.html,552,2,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,3.4355,completed
+2026-10-08T18:24:05.694,D:\kuchu\popup.html,834,3,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,3.6678,1.6817,started
+2026-10-08T18:24:07.376,D:\kuchu\popup.html,834,3,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,3.6678,1.6822,completed
+2026-10-08T18:25:01.434,D:\kuchu\popup.html,1296,4,review_testability,Consider whether this section is straightforward to test.,2.0862,3.0068,started
+2026-10-08T18:25:04.441,D:\kuchu\popup.html,1296,4,review_testability,Consider whether this section is straightforward to test.,2.0862,3.0074,completed
+2026-10-08T18:25:36.304,D:\kuchu\popup.html,1558,5,review_complexity,Consider whether the current logic is unnecessarily complex.,3.3999,2.2683,started
+2026-10-08T18:25:38.572,D:\kuchu\popup.html,1558,5,review_complexity,Consider whether the current logic is unnecessarily complex.,3.3999,2.2688,completed
+2026-10-08T18:26:00.472,D:\kuchu\popup.html,1819,6,review_loop,Reconsider loop behavior and termination.,3.5063,3.5388,started
+2026-10-08T18:26:04.011,D:\kuchu\popup.html,1819,6,review_loop,Reconsider loop behavior and termination.,3.5063,3.5398,completed
+2026-10-08T18:26:57.476,D:\kuchu\popup.html,2246,7,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,1.2617,started
+2026-10-08T18:26:58.739,D:\kuchu\popup.html,2246,7,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,1.2633,completed
+2026-10-08T18:27:41.245,D:\kuchu\popup.html,2581,8,review_imports,Check whether imports are necessary and consistent.,2.0505,2.3774,started
+2026-10-08T18:27:43.623,D:\kuchu\popup.html,2581,8,review_imports,Check whether imports are necessary and consistent.,2.0505,2.3783,completed
+2026-10-08T18:28:20.591,D:\kuchu\popup.html,2865,9,review_dependency,Consider whether the current dependency is actually needed.,2.0000,2.3548,started
+2026-10-08T18:28:22.947,D:\kuchu\popup.html,2865,9,review_dependency,Consider whether the current dependency is actually needed.,2.0000,2.3558,completed
+2026-10-08T18:28:58.900,D:\kuchu\popup.html,3126,10,review_readability,Pause and reconsider whether the current section is readable.,2.0000,4.4641,started
+2026-10-08T18:29:03.365,D:\kuchu\popup.html,3126,10,review_readability,Pause and reconsider whether the current section is readable.,2.0000,4.4651,completed
+2026-10-08T18:29:44.453,D:\kuchu\popup.html,3446,11,review_imports,Check whether imports are necessary and consistent.,2.0000,2.5894,started
+2026-10-08T18:29:47.044,D:\kuchu\popup.html,3446,11,review_imports,Check whether imports are necessary and consistent.,2.0000,2.5902,completed
+2026-10-08T18:30:42.266,D:\kuchu\popup.html,3883,12,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,2.1561,1.8027,started
+2026-10-08T18:30:44.069,D:\kuchu\popup.html,3883,12,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,2.1561,1.8031,completed
+2026-10-08T18:31:16.090,D:\kuchu\popup.html,4139,13,review_boundary,Check behavior at a boundary value.,2.0000,2.2414,started
+2026-10-08T18:31:18.333,D:\kuchu\popup.html,4139,13,review_boundary,Check behavior at a boundary value.,2.0000,2.2425,completed
+2026-10-08T18:31:53.011,D:\kuchu\popup.html,4402,14,review_imports,Check whether imports are necessary and consistent.,2.8050,3.9433,started
+2026-10-08T18:31:56.956,D:\kuchu\popup.html,4402,14,review_imports,Check whether imports are necessary and consistent.,2.8050,3.9447,completed
+2026-10-08T18:32:31.717,D:\kuchu\popup.html,4701,15,review_function_name,Check whether the function name communicates its purpose.,3.2172,1.7898,started
+2026-10-08T18:32:33.507,D:\kuchu\popup.html,4701,15,review_function_name,Check whether the function name communicates its purpose.,3.2172,1.7903,completed
+2026-10-08T18:33:07.915,D:\kuchu\popup.html,5031,16,review_null_case,Check how missing or empty values are handled.,2.4667,3.5736,started
+2026-10-08T18:33:11.490,D:\kuchu\popup.html,5031,16,review_null_case,Check how missing or empty values are handled.,2.4667,3.5747,completed
+2026-10-08T18:33:43.513,D:\kuchu\popup.html,5282,17,review_loop,Reconsider loop behavior and termination.,2.0000,3.9995,started
+2026-10-08T18:33:47.527,D:\kuchu\popup.html,5282,17,review_loop,Reconsider loop behavior and termination.,2.0000,4.0134,completed
+2026-10-08T18:34:28.478,D:\kuchu\popup.html,5605,18,review_dependency,Consider whether the current dependency is actually needed.,2.0000,2.3293,started
+2026-10-08T18:34:30.808,D:\kuchu\popup.html,5605,18,review_dependency,Consider whether the current dependency is actually needed.,2.0000,2.3302,completed
+2026-10-08T18:35:01.709,D:\kuchu\popup.html,5859,19,review_loop,Reconsider loop behavior and termination.,2.0660,2.2120,started
+2026-10-08T18:35:03.922,D:\kuchu\popup.html,5859,19,review_loop,Reconsider loop behavior and termination.,2.0660,2.2133,completed
+2026-10-08T18:35:36.907,D:\kuchu\popup.html,6156,20,review_data_flow,Trace where the current data comes from and where it goes.,2.3488,1.9355,started
+2026-10-08T18:35:38.844,D:\kuchu\popup.html,6156,20,review_data_flow,Trace where the current data comes from and where it goes.,2.3488,1.9366,completed
+2026-10-08T18:36:12.953,D:\kuchu\popup.html,6470,21,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,3.8132,4.8507,started
+2026-10-08T18:36:17.805,D:\kuchu\popup.html,6470,21,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,3.8132,4.8514,completed
+2026-10-08T18:36:56.023,D:\kuchu\popup.html,6809,22,review_api_usage,Check whether an external API call is being used correctly.,2.0000,1.8980,started
+2026-10-08T18:36:57.922,D:\kuchu\popup.html,6809,22,review_api_usage,Check whether an external API call is being used correctly.,2.0000,1.8988,completed
+2026-10-08T18:37:30.809,D:\kuchu\popup.html,7121,23,review_readability,Pause and reconsider whether the current section is readable.,4.2145,4.4222,started
+2026-10-08T18:37:35.232,D:\kuchu\popup.html,7121,23,review_readability,Pause and reconsider whether the current section is readable.,4.2145,4.4232,completed
+2026-10-08T18:38:04.203,D:\kuchu\popup.html,7394,24,review_return_value,Check whether the function returns the intended value.,2.0000,3.4955,started
+2026-10-08T18:38:07.699,D:\kuchu\popup.html,7394,24,review_return_value,Check whether the function returns the intended value.,2.0000,3.4963,completed
+2026-10-08T18:39:07.599,D:\kuchu\popup.js,449,1,review_imports,Check whether imports are necessary and consistent.,2.6802,1.4356,started
+2026-10-08T18:39:09.035,D:\kuchu\popup.js,449,1,review_imports,Check whether imports are necessary and consistent.,2.6802,1.4365,completed
+2026-10-08T18:39:39.846,D:\kuchu\popup.js,759,2,review_documentation,Consider whether the intent of this section is clear.,2.0000,4.6764,started
+2026-10-08T18:39:44.523,D:\kuchu\popup.js,759,2,review_documentation,Consider whether the intent of this section is clear.,2.0000,4.6773,completed
+2026-10-08T18:40:17.358,D:\kuchu\popup.js,1109,3,review_performance,Consider whether the current operation could become expensive.,4.8320,2.9541,started
+2026-10-08T18:40:20.313,D:\kuchu\popup.js,1109,3,review_performance,Consider whether the current operation could become expensive.,4.8320,2.9552,completed
+2026-10-08T18:40:49.876,D:\kuchu\popup.js,1361,4,review_condition,Reconsider whether a conditional branch is correct.,3.4126,4.6816,started
+2026-10-08T18:40:54.558,D:\kuchu\popup.js,1361,4,review_condition,Reconsider whether a conditional branch is correct.,3.4126,4.6826,completed
+2026-10-08T18:41:29.566,D:\kuchu\popup.js,1656,5,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,4.8884,started
+2026-10-08T18:41:34.455,D:\kuchu\popup.js,1656,5,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,4.8891,completed
+2026-10-08T18:42:19.492,D:\kuchu\popup.js,2030,6,review_structure,Reconsider the structure of the surrounding code.,2.3798,3.1068,started
+2026-10-08T18:42:22.599,D:\kuchu\popup.js,2030,6,review_structure,Reconsider the structure of the surrounding code.,2.3798,3.1078,completed
+2026-10-08T18:43:13.366,D:\kuchu\popup.js,2472,7,review_error_handling,Check whether an error path is handled correctly.,2.0000,2.5453,started
+2026-10-08T18:43:15.912,D:\kuchu\popup.js,2472,7,review_error_handling,Check whether an error path is handled correctly.,2.0000,2.5461,completed
+2026-10-08T18:43:47.691,D:\kuchu\popup.js,2768,8,review_duplication,Look for duplicated logic that could be simplified.,2.0000,2.2919,started
+2026-10-08T18:43:49.983,D:\kuchu\popup.js,2768,8,review_duplication,Look for duplicated logic that could be simplified.,2.0000,2.2925,completed
+2026-10-08T18:44:16.590,D:\kuchu\popup.js,3035,9,review_readability,Pause and reconsider whether the current section is readable.,2.8451,4.1219,started
+2026-10-08T18:44:20.713,D:\kuchu\popup.js,3035,9,review_readability,Pause and reconsider whether the current section is readable.,2.8451,4.1229,completed
+2026-10-08T18:44:53.319,D:\kuchu\popup.js,3291,10,review_structure,Reconsider the structure of the surrounding code.,2.0751,1.9140,started
+2026-10-08T18:44:55.233,D:\kuchu\popup.js,3291,10,review_structure,Reconsider the structure of the surrounding code.,2.0751,1.9146,completed
+2026-10-08T18:45:27.394,D:\kuchu\popup.js,3546,11,review_loop,Reconsider loop behavior and termination.,2.0506,4.0538,started
+2026-10-08T18:45:31.449,D:\kuchu\popup.js,3546,11,review_loop,Reconsider loop behavior and termination.,2.0506,4.0543,completed
+2026-10-08T18:46:12.638,D:\kuchu\contentscript.txt,302,1,review_null_case,Check how missing or empty values are handled.,4.0970,1.9032,started
+2026-10-08T18:46:14.542,D:\kuchu\contentscript.txt,302,1,review_null_case,Check how missing or empty values are handled.,4.0970,1.9043,completed
+2026-10-08T18:46:52.980,D:\kuchu\contentscript.txt,655,2,review_loop,Reconsider loop behavior and termination.,2.0000,3.6480,started
+2026-10-08T18:46:56.629,D:\kuchu\contentscript.txt,655,2,review_loop,Reconsider loop behavior and termination.,2.0000,3.6489,completed
+2026-10-08T18:47:19.168,D:\kuchu\contentscript.txt,922,3,review_boundary,Check behavior at a boundary value.,2.7718,1.7776,started
+2026-10-08T18:47:20.947,D:\kuchu\contentscript.txt,922,3,review_boundary,Check behavior at a boundary value.,2.7718,1.7785,completed
+2026-10-08T18:48:02.353,D:\kuchu\contentscript.txt,1325,4,review_api_usage,Check whether an external API call is being used correctly.,2.0000,1.3177,started
+2026-10-08T18:48:03.672,D:\kuchu\contentscript.txt,1325,4,review_api_usage,Check whether an external API call is being used correctly.,2.0000,1.3186,completed
+2026-10-08T18:48:35.640,D:\kuchu\contentscript.txt,1591,5,review_condition,Reconsider whether a conditional branch is correct.,2.0582,1.3947,started
+2026-10-08T18:48:37.036,D:\kuchu\contentscript.txt,1591,5,review_condition,Reconsider whether a conditional branch is correct.,2.0582,1.3954,completed
+2026-10-08T18:49:24.522,D:\kuchu\contentscript.txt,1988,6,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,2.1449,2.5608,started
+2026-10-08T18:49:27.084,D:\kuchu\contentscript.txt,1988,6,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,2.1449,2.5614,completed
+2026-10-08T18:50:08.070,D:\kuchu\contentscript.txt,2308,7,review_boundary,Check behavior at a boundary value.,2.0177,3.3065,started
+2026-10-08T18:50:11.378,D:\kuchu\contentscript.txt,2308,7,review_boundary,Check behavior at a boundary value.,2.0177,3.3078,completed
+2026-10-08T18:50:46.714,D:\kuchu\contentscript.txt,2572,8,review_data_flow,Trace where the current data comes from and where it goes.,2.8392,1.5725,started
+2026-10-08T18:50:48.287,D:\kuchu\contentscript.txt,2572,8,review_data_flow,Trace where the current data comes from and where it goes.,2.8392,1.5733,completed
+2026-10-08T18:51:23.860,D:\kuchu\contentscript.txt,2894,9,review_state,Reconsider how state changes through this section.,2.0000,4.3787,started
+2026-10-08T18:51:28.239,D:\kuchu\contentscript.txt,2894,9,review_state,Reconsider how state changes through this section.,2.0000,4.3790,completed
+2026-10-08T18:51:58.428,D:\kuchu\contentscript.txt,3159,10,review_testability,Consider whether this section is straightforward to test.,2.0000,1.5057,started
+2026-10-08T18:51:59.934,D:\kuchu\contentscript.txt,3159,10,review_testability,Consider whether this section is straightforward to test.,2.0000,1.5068,completed
+2026-10-08T18:52:35.840,D:\kuchu\contentscript.txt,3469,11,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0949,2.3562,started
+2026-10-08T18:52:38.197,D:\kuchu\contentscript.txt,3469,11,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0949,2.3571,completed
+2026-10-08T18:53:02.821,D:\kuchu\contentscript.txt,3731,12,review_structure,Reconsider the structure of the surrounding code.,3.8014,1.8468,started
+2026-10-08T18:53:04.670,D:\kuchu\contentscript.txt,3731,12,review_structure,Reconsider the structure of the surrounding code.,3.8014,1.8481,completed
+2026-10-08T18:53:44.513,D:\kuchu\contentscript.txt,4096,13,review_api_usage,Check whether an external API call is being used correctly.,2.0000,3.2218,started
+2026-10-08T18:53:47.735,D:\kuchu\contentscript.txt,4096,13,review_api_usage,Check whether an external API call is being used correctly.,2.0000,3.2223,completed
+2026-10-08T18:54:17.298,D:\kuchu\contentscript.txt,4365,14,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,4.8256,started
+2026-10-08T18:54:22.124,D:\kuchu\contentscript.txt,4365,14,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,4.8262,completed
+2026-10-08T18:55:00.282,D:\kuchu\contentscript.txt,4707,15,review_null_case,Check how missing or empty values are handled.,2.0000,3.6303,started
+2026-10-08T18:55:03.913,D:\kuchu\contentscript.txt,4707,15,review_null_case,Check how missing or empty values are handled.,2.0000,3.6316,completed
+2026-10-08T18:55:36.003,D:\kuchu\contentscript.txt,4968,16,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,3.7862,started
+2026-10-08T18:55:39.790,D:\kuchu\contentscript.txt,4968,16,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,3.7873,completed
+2026-10-08T18:56:11.802,D:\kuchu\contentscript.txt,5219,17,review_testability,Consider whether this section is straightforward to test.,2.0000,3.3578,started
+2026-10-08T18:56:15.161,D:\kuchu\contentscript.txt,5219,17,review_testability,Consider whether this section is straightforward to test.,2.0000,3.3587,completed
+2026-10-08T18:56:44.917,D:\kuchu\contentscript.txt,5489,18,review_performance,Consider whether the current operation could become expensive.,2.0000,4.2886,started
+2026-10-08T18:56:49.207,D:\kuchu\contentscript.txt,5489,18,review_performance,Consider whether the current operation could become expensive.,2.0000,4.2892,completed
+2026-10-08T18:57:58.238,D:\kuchu\contentscript.txt,6061,19,review_data_flow,Trace where the current data comes from and where it goes.,2.2187,2.6731,started
+2026-10-08T18:58:00.912,D:\kuchu\contentscript.txt,6061,19,review_data_flow,Trace where the current data comes from and where it goes.,2.2187,2.6738,completed
+2026-10-08T18:58:48.409,D:\kuchu\contentscript.txt,6489,20,review_testability,Consider whether this section is straightforward to test.,3.8774,1.4830,started
+2026-10-08T18:58:49.894,D:\kuchu\contentscript.txt,6489,20,review_testability,Consider whether this section is straightforward to test.,3.8774,1.4849,completed
+2026-10-08T18:59:30.423,D:\kuchu\contentscript.txt,6790,21,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,4.8076,started
+2026-10-08T18:59:35.231,D:\kuchu\contentscript.txt,6790,21,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,4.8086,completed
+2026-10-08T19:00:09.556,D:\kuchu\contentscript.txt,7083,22,review_function_name,Check whether the function name communicates its purpose.,2.0000,2.4489,started
+2026-10-08T19:00:12.006,D:\kuchu\contentscript.txt,7083,22,review_function_name,Check whether the function name communicates its purpose.,2.0000,2.4497,completed
+2026-10-08T19:00:46.964,D:\kuchu\contentscript.txt,7366,23,review_null_case,Check how missing or empty values are handled.,2.7528,4.9408,started
+2026-10-08T19:00:51.906,D:\kuchu\contentscript.txt,7366,23,review_null_case,Check how missing or empty values are handled.,2.7528,4.9414,completed
+2026-10-08T19:01:29.925,D:\kuchu\contentscript.txt,7678,24,review_imports,Check whether imports are necessary and consistent.,2.0000,4.3431,started
+2026-10-08T19:01:34.269,D:\kuchu\contentscript.txt,7678,24,review_imports,Check whether imports are necessary and consistent.,2.0000,4.3441,completed
+2026-10-08T19:02:07.939,D:\kuchu\contentscript.txt,7952,25,review_condition,Reconsider whether a conditional branch is correct.,2.0000,1.7011,started
+2026-10-08T19:02:09.641,D:\kuchu\contentscript.txt,7952,25,review_condition,Reconsider whether a conditional branch is correct.,2.0000,1.7020,completed
+2026-10-08T19:02:42.301,D:\kuchu\contentscript.txt,8204,26,review_testability,Consider whether this section is straightforward to test.,2.0000,3.2923,started
+2026-10-08T19:02:45.595,D:\kuchu\contentscript.txt,8204,26,review_testability,Consider whether this section is straightforward to test.,2.0000,3.2934,completed
+2026-10-08T19:03:30.985,D:\kuchu\contentscript.txt,8579,27,review_function_name,Check whether the function name communicates its purpose.,2.0000,1.3190,started
+2026-10-08T19:03:32.305,D:\kuchu\contentscript.txt,8579,27,review_function_name,Check whether the function name communicates its purpose.,2.0000,1.3200,completed
+2026-10-08T19:04:07.759,D:\kuchu\contentscript.txt,8845,28,review_testability,Consider whether this section is straightforward to test.,2.0000,4.7515,started
+2026-10-08T19:04:12.511,D:\kuchu\contentscript.txt,8845,28,review_testability,Consider whether this section is straightforward to test.,2.0000,4.7525,completed
+2026-10-08T19:05:17.732,D:\kuchu\contentscript.txt,9347,29,review_edge_case,Consider an unusual or boundary input.,2.0000,3.8809,started
+2026-10-08T19:05:21.613,D:\kuchu\contentscript.txt,9347,29,review_edge_case,Consider an unusual or boundary input.,2.0000,3.8816,completed
+2026-10-08T19:06:03.546,D:\kuchu\contentscript.txt,9665,30,review_data_flow,Trace where the current data comes from and where it goes.,2.2999,3.6813,started
+2026-10-08T19:06:07.228,D:\kuchu\contentscript.txt,9665,30,review_data_flow,Trace where the current data comes from and where it goes.,2.2999,3.6821,completed
+2026-10-08T19:06:51.306,D:\kuchu\contentscript.txt,10010,31,review_null_case,Check how missing or empty values are handled.,2.0000,3.8744,started
+2026-10-08T19:06:55.181,D:\kuchu\contentscript.txt,10010,31,review_null_case,Check how missing or empty values are handled.,2.0000,3.8752,completed
+2026-10-08T19:07:31.842,D:\kuchu\contentscript.txt,10282,32,review_documentation,Consider whether the intent of this section is clear.,2.0000,4.0982,started
+2026-10-08T19:07:35.941,D:\kuchu\contentscript.txt,10282,32,review_documentation,Consider whether the intent of this section is clear.,2.0000,4.0988,completed
+2026-10-08T19:08:32.738,D:\kuchu\contentscript.txt,10775,33,review_duplication,Look for duplicated logic that could be simplified.,2.0000,1.6304,started
+2026-10-08T19:08:34.369,D:\kuchu\contentscript.txt,10775,33,review_duplication,Look for duplicated logic that could be simplified.,2.0000,1.6310,completed
+2026-10-08T19:09:12.972,D:\kuchu\contentscript.txt,11104,34,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,3.0553,started
+2026-10-08T19:09:16.028,D:\kuchu\contentscript.txt,11104,34,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,3.0561,completed
+2026-10-08T19:09:47.852,D:\kuchu\contentscript.txt,11366,35,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,3.4272,started
+2026-10-08T19:09:51.280,D:\kuchu\contentscript.txt,11366,35,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,3.4282,completed
+2026-10-08T19:10:34.826,D:\kuchu\contentscript.txt,11686,36,review_type_consistency,Check whether values have consistent types.,2.0000,4.5015,started
+2026-10-08T19:10:39.328,D:\kuchu\contentscript.txt,11686,36,review_type_consistency,Check whether values have consistent types.,2.0000,4.5021,completed
+2026-10-08T19:11:29.090,D:\kuchu\contentscript.txt,12073,37,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,1.8367,started
+2026-10-08T19:11:30.928,D:\kuchu\contentscript.txt,12073,37,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,1.8379,completed
+2026-10-08T19:12:03.650,D:\kuchu\contentscript.txt,12333,38,review_readability,Pause and reconsider whether the current section is readable.,2.0000,1.8598,started
+2026-10-08T19:12:05.511,D:\kuchu\contentscript.txt,12333,38,review_readability,Pause and reconsider whether the current section is readable.,2.0000,1.8612,completed
+2026-10-08T19:12:39.877,D:\kuchu\contentscript.txt,12614,39,review_documentation,Consider whether the intent of this section is clear.,2.0000,2.0123,started
+2026-10-08T19:12:41.890,D:\kuchu\contentscript.txt,12614,39,review_documentation,Consider whether the intent of this section is clear.,2.0000,2.0131,completed
+2026-10-08T19:14:53.542,D:\kuchu\contentscript.txt,13155,40,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,3.3265,started
+2026-10-08T19:14:56.869,D:\kuchu\contentscript.txt,13155,40,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,3.3270,completed
+2026-10-08T19:15:52.754,D:\kuchu\contentscript.txt,13578,41,review_readability,Pause and reconsider whether the current section is readable.,2.0000,4.5885,started
+2026-10-08T19:15:57.343,D:\kuchu\contentscript.txt,13578,41,review_readability,Pause and reconsider whether the current section is readable.,2.0000,4.5893,completed
+2026-10-08T19:16:30.046,D:\kuchu\contentscript.txt,13835,42,review_loop,Reconsider loop behavior and termination.,2.0000,2.2779,started
+2026-10-08T19:16:32.325,D:\kuchu\contentscript.txt,13835,42,review_loop,Reconsider loop behavior and termination.,2.0000,2.2786,completed
+2026-10-08T19:17:45.683,D:\kuchu\contentscript.txt,14363,43,review_testability,Consider whether this section is straightforward to test.,2.0000,3.8361,started
+2026-10-08T19:17:49.520,D:\kuchu\contentscript.txt,14363,43,review_testability,Consider whether this section is straightforward to test.,2.0000,3.8370,completed
+2026-10-08T19:18:21.339,D:\kuchu\contentscript.txt,14625,44,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,2.9737,started
+2026-10-08T19:18:24.314,D:\kuchu\contentscript.txt,14625,44,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,2.9748,completed
+2026-10-08T19:19:16.481,D:\kuchu\contentscript.txt,15047,45,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,2.0000,1.9577,started
+2026-10-08T19:19:18.439,D:\kuchu\contentscript.txt,15047,45,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,2.0000,1.9582,completed
+2026-10-08T19:19:59.924,D:\kuchu\contentscript.txt,15372,46,review_documentation,Consider whether the intent of this section is clear.,2.0000,4.7785,started
+2026-10-08T19:20:04.704,D:\kuchu\contentscript.txt,15372,46,review_documentation,Consider whether the intent of this section is clear.,2.0000,4.7796,completed
+2026-10-08T19:20:44.136,D:\kuchu\contentscript.txt,15669,47,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,2.1909,started
+2026-10-08T19:20:46.328,D:\kuchu\contentscript.txt,15669,47,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,2.1921,completed
+2026-10-08T19:21:31.817,D:\kuchu\contentscript.txt,16021,48,review_structure,Reconsider the structure of the surrounding code.,2.0000,1.9484,started
+2026-10-08T19:21:33.767,D:\kuchu\contentscript.txt,16021,48,review_structure,Reconsider the structure of the surrounding code.,2.0000,1.9496,completed
+2026-10-08T19:22:18.275,D:\kuchu\contentscript.txt,16344,49,review_duplication,Look for duplicated logic that could be simplified.,2.0000,1.0285,started
+2026-10-08T19:22:19.304,D:\kuchu\contentscript.txt,16344,49,review_duplication,Look for duplicated logic that could be simplified.,2.0000,1.0290,completed
+2026-10-08T19:23:06.290,D:\kuchu\contentscript.txt,16676,50,review_api_usage,Check whether an external API call is being used correctly.,2.0000,2.6441,started
+2026-10-08T19:23:08.935,D:\kuchu\contentscript.txt,16676,50,review_api_usage,Check whether an external API call is being used correctly.,2.0000,2.6452,completed
+2026-10-08T19:24:05.952,D:\kuchu\contentscript.txt,17106,51,review_state,Reconsider how state changes through this section.,2.0000,1.0653,started
+2026-10-08T19:24:07.018,D:\kuchu\contentscript.txt,17106,51,review_state,Reconsider how state changes through this section.,2.0000,1.0660,completed
+2026-10-08T19:24:41.384,D:\kuchu\contentscript.txt,17365,52,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,2.2882,started
+2026-10-08T19:24:43.673,D:\kuchu\contentscript.txt,17365,52,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,2.2892,completed
+2026-10-08T19:25:17.719,D:\kuchu\contentscript.txt,17637,53,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,4.9344,started
+2026-10-08T19:25:22.654,D:\kuchu\contentscript.txt,17637,53,review_data_flow,Trace where the current data comes from and where it goes.,2.0000,4.9348,completed
+2026-10-08T19:26:01.434,D:\kuchu\contentscript.txt,17952,54,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,2.6077,started
+2026-10-08T19:26:04.043,D:\kuchu\contentscript.txt,17952,54,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,2.6095,completed
+2026-10-08T19:26:40.657,D:\kuchu\contentscript.txt,18242,55,review_loop,Reconsider loop behavior and termination.,2.0000,2.5980,started
+2026-10-08T19:26:43.256,D:\kuchu\contentscript.txt,18242,55,review_loop,Reconsider loop behavior and termination.,2.0000,2.5990,completed
+2026-10-08T19:27:19.258,D:\kuchu\contentscript.txt,18512,56,review_structure,Reconsider the structure of the surrounding code.,2.0000,2.1231,started
+2026-10-08T19:27:21.382,D:\kuchu\contentscript.txt,18512,56,review_structure,Reconsider the structure of the surrounding code.,2.0000,2.1244,completed
+2026-10-08T19:27:57.368,D:\kuchu\contentscript.txt,18810,57,review_dependency,Consider whether the current dependency is actually needed.,2.0000,1.0705,started
+2026-10-08T19:27:58.439,D:\kuchu\contentscript.txt,18810,57,review_dependency,Consider whether the current dependency is actually needed.,2.0000,1.0715,completed
+2026-10-08T19:28:35.046,D:\kuchu\contentscript.txt,19090,58,review_error_handling,Check whether an error path is handled correctly.,2.0000,1.2421,started
+2026-10-08T19:28:36.289,D:\kuchu\contentscript.txt,19090,58,review_error_handling,Check whether an error path is handled correctly.,2.0000,1.2433,completed
+2026-10-08T19:29:15.854,D:\kuchu\contentscript.txt,19376,59,review_api_usage,Check whether an external API call is being used correctly.,2.0000,2.1644,started
+2026-10-08T19:29:18.020,D:\kuchu\contentscript.txt,19376,59,review_api_usage,Check whether an external API call is being used correctly.,2.0000,2.1655,completed
+2026-10-08T19:30:32.082,D:\kuchu\contentscript.txt,19640,60,review_documentation,Consider whether the intent of this section is clear.,2.0000,2.2900,started
+2026-10-08T19:30:34.373,D:\kuchu\contentscript.txt,19640,60,review_documentation,Consider whether the intent of this section is clear.,2.0000,2.2906,completed
+2026-10-08T19:31:06.091,D:\kuchu\contentscript.txt,19892,61,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,3.6869,started
+2026-10-08T19:31:09.779,D:\kuchu\contentscript.txt,19892,61,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,3.6877,completed
+2026-10-08T19:31:41.511,D:\kuchu\contentscript.txt,20149,62,review_function_name,Check whether the function name communicates its purpose.,2.0000,4.1319,started
+2026-10-08T19:31:45.644,D:\kuchu\contentscript.txt,20149,62,review_function_name,Check whether the function name communicates its purpose.,2.0000,4.1330,completed
+2026-10-08T19:32:34.932,D:\kuchu\contentscript.txt,20507,63,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,2.4260,started
+2026-10-08T19:32:37.359,D:\kuchu\contentscript.txt,20507,63,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,2.4269,completed
+2026-10-08T19:33:19.716,D:\kuchu\contentscript.txt,20803,64,review_performance,Consider whether the current operation could become expensive.,2.0000,3.0792,started
+2026-10-08T19:33:22.797,D:\kuchu\contentscript.txt,20803,64,review_performance,Consider whether the current operation could become expensive.,2.0000,3.0805,completed
+2026-10-08T19:34:31.983,D:\kuchu\contentscript.txt,21313,65,review_testability,Consider whether this section is straightforward to test.,2.0000,4.9188,started
+2026-10-08T19:34:36.903,D:\kuchu\contentscript.txt,21313,65,review_testability,Consider whether this section is straightforward to test.,2.0000,4.9199,completed
+2026-10-08T19:35:11.038,D:\kuchu\contentscript.txt,21586,66,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,2.5689,started
+2026-10-08T19:35:13.607,D:\kuchu\contentscript.txt,21586,66,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,2.5695,completed
+2026-10-08T19:35:44.735,D:\kuchu\contentscript.txt,21840,67,review_loop,Reconsider loop behavior and termination.,2.0000,1.5937,started
+2026-10-08T19:35:46.329,D:\kuchu\contentscript.txt,21840,67,review_loop,Reconsider loop behavior and termination.,2.0000,1.5946,completed
+2026-10-08T19:36:53.531,D:\kuchu\contentscript.txt,22365,68,review_testability,Consider whether this section is straightforward to test.,2.0000,4.2540,started
+2026-10-08T19:36:57.785,D:\kuchu\contentscript.txt,22365,68,review_testability,Consider whether this section is straightforward to test.,2.0000,4.2548,completed
+2026-10-08T19:38:01.210,D:\kuchu\contentscript.txt,22858,69,review_structure,Reconsider the structure of the surrounding code.,2.0000,4.3153,started
+2026-10-08T19:38:05.526,D:\kuchu\contentscript.txt,22858,69,review_structure,Reconsider the structure of the surrounding code.,2.0000,4.3159,completed
+2026-10-08T19:38:40.180,D:\kuchu\contentscript.txt,23126,70,review_condition,Reconsider whether a conditional branch is correct.,2.0000,4.6215,started
+2026-10-08T19:38:44.803,D:\kuchu\contentscript.txt,23126,70,review_condition,Reconsider whether a conditional branch is correct.,2.0000,4.6230,completed
+2026-10-08T19:39:21.853,D:\kuchu\contentscript.txt,23380,71,review_error_handling,Check whether an error path is handled correctly.,2.0000,3.6646,started
+2026-10-08T19:39:25.519,D:\kuchu\contentscript.txt,23380,71,review_error_handling,Check whether an error path is handled correctly.,2.0000,3.6651,completed
+2026-10-08T19:40:02.718,D:\kuchu\contentscript.txt,23660,72,review_api_usage,Check whether an external API call is being used correctly.,2.0000,1.7234,started
+2026-10-08T19:40:04.442,D:\kuchu\contentscript.txt,23660,72,review_api_usage,Check whether an external API call is being used correctly.,2.0000,1.7238,completed
+2026-10-08T19:40:52.078,D:\kuchu\contentscript.txt,23986,73,review_edge_case,Consider an unusual or boundary input.,2.0000,4.7877,started
+2026-10-08T19:40:56.866,D:\kuchu\contentscript.txt,23986,73,review_edge_case,Consider an unusual or boundary input.,2.0000,4.7883,completed
+2026-10-08T19:41:28.446,D:\kuchu\contentscript.txt,24237,74,review_testability,Consider whether this section is straightforward to test.,2.0000,4.4686,started
+2026-10-08T19:41:32.916,D:\kuchu\contentscript.txt,24237,74,review_testability,Consider whether this section is straightforward to test.,2.0000,4.4698,completed
+2026-10-08T19:42:34.154,D:\kuchu\contentscript.txt,24704,75,review_condition,Reconsider whether a conditional branch is correct.,2.0000,2.2737,started
+2026-10-08T19:42:36.428,D:\kuchu\contentscript.txt,24704,75,review_condition,Reconsider whether a conditional branch is correct.,2.0000,2.2744,completed
+2026-10-08T19:43:13.224,D:\kuchu\contentscript.txt,24990,76,review_readability,Pause and reconsider whether the current section is readable.,2.0000,1.8894,started
+2026-10-08T19:43:15.114,D:\kuchu\contentscript.txt,24990,76,review_readability,Pause and reconsider whether the current section is readable.,2.0000,1.8903,completed
+2026-10-08T19:43:57.979,D:\kuchu\contentscript.txt,25333,77,review_imports,Check whether imports are necessary and consistent.,2.0000,3.3159,started
+2026-10-08T19:44:01.296,D:\kuchu\contentscript.txt,25333,77,review_imports,Check whether imports are necessary and consistent.,2.0000,3.3170,completed
+2026-10-08T19:44:39.154,D:\kuchu\contentscript.txt,25623,78,review_edge_case,Consider an unusual or boundary input.,2.0000,3.6015,started
+2026-10-08T19:44:42.756,D:\kuchu\contentscript.txt,25623,78,review_edge_case,Consider an unusual or boundary input.,2.0000,3.6022,completed
+2026-10-08T19:45:59.742,D:\kuchu\contentscript.txt,26238,79,review_imports,Check whether imports are necessary and consistent.,2.0000,1.9764,started
+2026-10-08T19:46:01.719,D:\kuchu\contentscript.txt,26238,79,review_imports,Check whether imports are necessary and consistent.,2.0000,1.9773,completed
+2026-10-08T19:47:04.597,D:\kuchu\contentscript.txt,26733,80,review_state,Reconsider how state changes through this section.,2.0000,1.4336,started
+2026-10-08T19:47:06.031,D:\kuchu\contentscript.txt,26733,80,review_state,Reconsider how state changes through this section.,2.0000,1.4341,completed
+2026-10-08T19:47:57.459,D:\kuchu\contentscript.txt,27129,81,review_readability,Pause and reconsider whether the current section is readable.,2.0000,4.7410,started
+2026-10-08T19:48:02.201,D:\kuchu\contentscript.txt,27129,81,review_readability,Pause and reconsider whether the current section is readable.,2.0000,4.7419,completed
+2026-10-08T19:48:39.521,D:\kuchu\contentscript.txt,27404,82,review_return_value,Check whether the function returns the intended value.,2.0000,2.0223,started
+2026-10-08T19:48:41.544,D:\kuchu\contentscript.txt,27404,82,review_return_value,Check whether the function returns the intended value.,2.0000,2.0227,completed
+2026-10-08T19:49:19.725,D:\kuchu\contentscript.txt,27690,83,review_testability,Consider whether this section is straightforward to test.,2.0000,1.5552,started
+2026-10-08T19:49:21.281,D:\kuchu\contentscript.txt,27690,83,review_testability,Consider whether this section is straightforward to test.,2.0000,1.5559,completed
+2026-10-08T19:50:00.206,D:\kuchu\contentscript.txt,27983,84,review_api_usage,Check whether an external API call is being used correctly.,2.0000,2.6901,started
+2026-10-08T19:50:02.897,D:\kuchu\contentscript.txt,27983,84,review_api_usage,Check whether an external API call is being used correctly.,2.0000,2.6912,completed
+2026-10-08T19:50:46.672,D:\kuchu\contentscript.txt,28317,85,review_error_handling,Check whether an error path is handled correctly.,2.0000,2.1663,started
+2026-10-08T19:50:48.839,D:\kuchu\contentscript.txt,28317,85,review_error_handling,Check whether an error path is handled correctly.,2.0000,2.1673,completed
+2026-10-08T19:51:20.750,D:\kuchu\contentscript.txt,28574,86,review_structure,Reconsider the structure of the surrounding code.,2.0000,2.5081,started
+2026-10-08T19:51:23.260,D:\kuchu\contentscript.txt,28574,86,review_structure,Reconsider the structure of the surrounding code.,2.0000,2.5095,completed
+2026-10-08T19:52:16.920,D:\kuchu\contentscript.txt,28964,87,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,3.4488,started
+2026-10-08T19:52:20.370,D:\kuchu\contentscript.txt,28964,87,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,3.4498,completed
+2026-10-08T19:52:56.462,D:\kuchu\contentscript.txt,29245,88,review_testability,Consider whether this section is straightforward to test.,2.0000,3.9063,started
+2026-10-08T19:53:00.369,D:\kuchu\contentscript.txt,29245,88,review_testability,Consider whether this section is straightforward to test.,2.0000,3.9070,completed
+2026-10-08T19:53:47.564,D:\kuchu\contentscript.txt,29594,89,review_dependency,Consider whether the current dependency is actually needed.,2.0000,3.0043,started
+2026-10-08T19:53:50.571,D:\kuchu\contentscript.txt,29594,89,review_dependency,Consider whether the current dependency is actually needed.,2.0000,3.0070,completed
+2026-10-08T19:54:24.178,D:\kuchu\contentscript.txt,29849,90,review_imports,Check whether imports are necessary and consistent.,2.0000,1.3395,started
+2026-10-08T19:54:25.518,D:\kuchu\contentscript.txt,29849,90,review_imports,Check whether imports are necessary and consistent.,2.0000,1.3401,completed
+2026-10-08T19:54:58.989,D:\kuchu\contentscript.txt,30101,91,review_null_case,Check how missing or empty values are handled.,2.0000,3.3287,started
+2026-10-08T19:55:02.319,D:\kuchu\contentscript.txt,30101,91,review_null_case,Check how missing or empty values are handled.,2.0000,3.3302,completed
+2026-10-08T19:55:36.267,D:\kuchu\contentscript.txt,30379,92,review_error_handling,Check whether an error path is handled correctly.,2.0000,2.8531,started
+2026-10-08T19:55:39.121,D:\kuchu\contentscript.txt,30379,92,review_error_handling,Check whether an error path is handled correctly.,2.0000,2.8543,completed
+2026-10-08T19:56:12.545,D:\kuchu\contentscript.txt,30646,93,review_null_case,Check how missing or empty values are handled.,2.0000,1.4315,started
+2026-10-08T19:56:13.978,D:\kuchu\contentscript.txt,30646,93,review_null_case,Check how missing or empty values are handled.,2.0000,1.4324,completed
+2026-10-08T19:56:51.470,D:\kuchu\contentscript.txt,30932,94,review_boundary,Check behavior at a boundary value.,2.0000,4.1199,started
+2026-10-08T19:56:55.593,D:\kuchu\contentscript.txt,30932,94,review_boundary,Check behavior at a boundary value.,2.0000,4.1232,completed
+2026-10-08T19:57:30.849,D:\kuchu\contentscript.txt,31196,95,review_function_name,Check whether the function name communicates its purpose.,2.0000,1.0572,started
+2026-10-08T19:57:31.906,D:\kuchu\contentscript.txt,31196,95,review_function_name,Check whether the function name communicates its purpose.,2.0000,1.0577,completed
+2026-10-08T19:58:31.678,D:\kuchu\contentscript.txt,31652,96,review_type_consistency,Check whether values have consistent types.,2.0000,1.9409,started
+2026-10-08T19:58:33.621,D:\kuchu\contentscript.txt,31652,96,review_type_consistency,Check whether values have consistent types.,2.0000,1.9421,completed
+2026-10-08T19:59:24.358,D:\kuchu\contentscript.txt,32070,97,review_type_consistency,Check whether values have consistent types.,2.0000,4.4655,started
+2026-10-08T19:59:28.825,D:\kuchu\contentscript.txt,32070,97,review_type_consistency,Check whether values have consistent types.,2.0000,4.4670,completed
+2026-10-08T20:00:04.933,D:\kuchu\contentscript.txt,32359,98,review_structure,Reconsider the structure of the surrounding code.,2.0000,4.1641,started
+2026-10-08T20:00:09.098,D:\kuchu\contentscript.txt,32359,98,review_structure,Reconsider the structure of the surrounding code.,2.0000,4.1647,completed
+2026-10-08T20:00:52.523,D:\kuchu\contentscript.txt,32696,99,review_type_consistency,Check whether values have consistent types.,2.0000,3.3500,started
+2026-10-08T20:00:55.875,D:\kuchu\contentscript.txt,32696,99,review_type_consistency,Check whether values have consistent types.,2.0000,3.3516,completed
+2026-10-08T20:01:28.141,D:\kuchu\contentscript.txt,32946,100,review_state,Reconsider how state changes through this section.,2.0000,1.9620,started
+2026-10-08T20:01:30.103,D:\kuchu\contentscript.txt,32946,100,review_state,Reconsider how state changes through this section.,2.0000,1.9628,completed
+2026-10-08T20:02:04.828,D:\kuchu\contentscript.txt,33198,101,review_null_case,Check how missing or empty values are handled.,2.0000,2.3993,started
+2026-10-08T20:02:07.228,D:\kuchu\contentscript.txt,33198,101,review_null_case,Check how missing or empty values are handled.,2.0000,2.3999,completed
+2026-10-08T20:02:41.148,D:\kuchu\contentscript.txt,33451,102,review_state,Reconsider how state changes through this section.,2.0000,2.4852,started
+2026-10-08T20:02:43.634,D:\kuchu\contentscript.txt,33451,102,review_state,Reconsider how state changes through this section.,2.0000,2.4867,completed
+2026-10-08T20:03:30.637,D:\kuchu\contentscript.txt,33793,103,review_condition,Reconsider whether a conditional branch is correct.,2.0000,3.3442,started
+2026-10-08T20:03:33.982,D:\kuchu\contentscript.txt,33793,103,review_condition,Reconsider whether a conditional branch is correct.,2.0000,3.3450,completed
+2026-10-08T20:04:08.759,D:\kuchu\contentscript.txt,34050,104,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,2.0000,4.1924,started
+2026-10-08T20:04:12.952,D:\kuchu\contentscript.txt,34050,104,review_final_consistency,Check whether the new section remains consistent with the surrounding code.,2.0000,4.1930,completed
+2026-10-08T20:04:58.432,D:\kuchu\contentscript.txt,34390,105,review_condition,Reconsider whether a conditional branch is correct.,2.0000,2.3797,started
+2026-10-08T20:05:00.813,D:\kuchu\contentscript.txt,34390,105,review_condition,Reconsider whether a conditional branch is correct.,2.0000,2.3803,completed
+2026-10-08T20:06:16.121,D:\kuchu\contentscript.txt,34950,106,review_type_consistency,Check whether values have consistent types.,2.0000,1.6654,started
+2026-10-08T20:06:17.787,D:\kuchu\contentscript.txt,34950,106,review_type_consistency,Check whether values have consistent types.,2.0000,1.6663,completed
+2026-10-08T20:06:55.319,D:\kuchu\contentscript.txt,35235,107,review_return_value,Check whether the function returns the intended value.,2.0000,1.5639,started
+2026-10-08T20:06:56.884,D:\kuchu\contentscript.txt,35235,107,review_return_value,Check whether the function returns the intended value.,2.0000,1.5646,completed
+2026-10-08T20:07:41.519,D:\kuchu\contentscript.txt,35551,108,review_error_handling,Check whether an error path is handled correctly.,2.0000,1.4534,started
+2026-10-08T20:07:42.973,D:\kuchu\contentscript.txt,35551,108,review_error_handling,Check whether an error path is handled correctly.,2.0000,1.4540,completed
+2026-10-08T20:08:25.524,D:\kuchu\contentscript.txt,35842,109,review_performance,Consider whether the current operation could become expensive.,2.0000,2.6996,started
+2026-10-08T20:08:28.224,D:\kuchu\contentscript.txt,35842,109,review_performance,Consider whether the current operation could become expensive.,2.0000,2.7003,completed
+2026-10-08T20:09:09.074,D:\kuchu\contentscript.txt,36148,110,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,3.6996,started
+2026-10-08T20:09:12.774,D:\kuchu\contentscript.txt,36148,110,review_cleanup,Check whether temporary resources are properly cleaned up.,2.0000,3.7003,completed
+2026-10-08T20:09:46.065,D:\kuchu\contentscript.txt,36402,111,review_loop,Reconsider loop behavior and termination.,2.0000,3.0126,started
+2026-10-08T20:09:49.078,D:\kuchu\contentscript.txt,36402,111,review_loop,Reconsider loop behavior and termination.,2.0000,3.0134,completed
+2026-10-08T20:10:29.197,D:\kuchu\contentscript.txt,36726,112,review_error_handling,Check whether an error path is handled correctly.,2.0000,1.3371,started
+2026-10-08T20:10:30.536,D:\kuchu\contentscript.txt,36726,112,review_error_handling,Check whether an error path is handled correctly.,2.0000,1.3384,completed
+2026-10-08T20:11:05.968,D:\kuchu\contentscript.txt,37017,113,review_api_usage,Check whether an external API call is being used correctly.,2.0000,4.2228,started
+2026-10-08T20:11:10.192,D:\kuchu\contentscript.txt,37017,113,review_api_usage,Check whether an external API call is being used correctly.,2.0000,4.2239,completed
+2026-10-08T20:11:53.753,D:\kuchu\contentscript.txt,37343,114,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,1.1600,started
+2026-10-08T20:11:54.915,D:\kuchu\contentscript.txt,37343,114,review_variable_name,Reconsider whether a variable name is clear enough.,2.0000,1.1616,completed
+2026-10-08T20:12:33.183,D:\kuchu\contentscript.txt,37630,115,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,2.5329,started
+2026-10-08T20:12:35.718,D:\kuchu\contentscript.txt,37630,115,review_complexity,Consider whether the current logic is unnecessarily complex.,2.0000,2.5343,completed
+2026-10-08T20:13:13.229,D:\kuchu\contentscript.txt,37916,116,review_function_name,Check whether the function name communicates its purpose.,2.0000,3.3326,started
+2026-10-08T20:13:16.562,D:\kuchu\contentscript.txt,37916,116,review_function_name,Check whether the function name communicates its purpose.,2.0000,3.3331,completed
+2026-10-08T20:14:01.592,D:\kuchu\contentscript.txt,38297,117,review_function_name,Check whether the function name communicates its purpose.,2.0000,2.2649,started
+2026-10-08T20:14:03.858,D:\kuchu\contentscript.txt,38297,117,review_function_name,Check whether the function name communicates its purpose.,2.0000,2.2661,completed
+2026-10-08T20:15:04.459,D:\kuchu\contentscript.txt,38764,118,review_duplication,Look for duplicated logic that could be simplified.,2.0000,4.8528,started
+2026-10-08T20:15:09.313,D:\kuchu\contentscript.txt,38764,118,review_duplication,Look for duplicated logic that could be simplified.,2.0000,4.8540,completed
+2026-10-08T20:15:55.576,D:\kuchu\contentscript.txt,39104,119,review_edge_case,Consider an unusual or boundary input.,2.0000,1.6161,started
+2026-10-08T20:15:57.193,D:\kuchu\contentscript.txt,39104,119,review_edge_case,Consider an unusual or boundary input.,2.0000,1.6168,completed
+2026-10-08T20:16:51.525,D:\kuchu\contentscript.txt,39486,120,review_performance,Consider whether the current operation could become expensive.,2.0000,3.5812,started
+2026-10-08T20:16:55.107,D:\kuchu\contentscript.txt,39486,120,review_performance,Consider whether the current operation could become expensive.,2.0000,3.5821,completed
+2026-10-08T20:17:34.839,D:\kuchu\contentscript.txt,39755,121,review_type_consistency,Check whether values have consistent types.,2.0000,2.1844,started
+2026-10-08T20:17:37.024,D:\kuchu\contentscript.txt,39755,121,review_type_consistency,Check whether values have consistent types.,2.0000,2.1852,completed
+2026-10-08T20:18:19.165,D:\kuchu\contentscript.txt,40042,122,review_readability,Pause and reconsider whether the current section is readable.,2.0000,3.7165,started
+2026-10-08T20:18:22.882,D:\kuchu\contentscript.txt,40042,122,review_readability,Pause and reconsider whether the current section is readable.,2.0000,3.7173,completed
+2026-10-08T20:18:55.165,D:\kuchu\contentscript.txt,40296,123,review_boundary,Check behavior at a boundary value.,2.0000,2.5589,started
+2026-10-08T20:18:57.724,D:\kuchu\contentscript.txt,40296,123,review_boundary,Check behavior at a boundary value.,2.0000,2.5594,completed
+2026-10-08T20:20:02.436,D:\kuchu\contentscript.txt,40814,124,review_imports,Check whether imports are necessary and consistent.,2.0000,1.0286,started
+2026-10-08T20:20:03.465,D:\kuchu\contentscript.txt,40814,124,review_imports,Check whether imports are necessary and consistent.,2.0000,1.0291,completed
+2026-10-08T20:21:06.841,D:\kuchu\contentScript.js,339,1,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,4.6721,3.7973,started
+2026-10-08T20:21:10.640,D:\kuchu\contentScript.js,339,1,review_security,Pause and consider whether the implementation exposes an unsafe assumption.,4.6721,3.7987,completed
+2026-10-08T20:21:39.819,D:\kuchu\contentScript.js,591,2,review_condition,Reconsider whether a conditional branch is correct.,2.0912,2.0608,started
+2026-10-08T20:21:41.880,D:\kuchu\contentScript.js,591,2,review_condition,Reconsider whether a conditional branch is correct.,2.0912,2.0614,completed
+2026-10-08T20:22:09.236,D:\kuchu\contentScript.js,857,3,review_null_case,Check how missing or empty values are handled.,2.2460,3.6796,started
+2026-10-08T20:22:12.917,D:\kuchu\contentScript.js,857,3,review_null_case,Check how missing or empty values are handled.,2.2460,3.6807,completed
+2026-10-08T20:22:48.558,D:\kuchu\contentScript.js,1149,4,review_state,Reconsider how state changes through this section.,2.4075,3.7115,started
+2026-10-08T20:22:52.271,D:\kuchu\contentScript.js,1149,4,review_state,Reconsider how state changes through this section.,2.4075,3.7133,completed
+2026-10-08T20:23:21.985,D:\kuchu\contentScript.js,1417,5,review_state,Reconsider how state changes through this section.,4.6404,2.4126,started
