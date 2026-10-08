@@ -1,0 +1,5 @@
+# Ignore the entire .hpc folder
+.hpc/
+
+# Ignore the specific python file
+test.py
